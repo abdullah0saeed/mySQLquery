@@ -7,6 +7,7 @@ import config from "../../config";
 export default function Query() {
   const [query, setQuery] = useState("");
   const [view, setView] = useState([]);
+  const [error, setError] = useState("");
 
   const sendQuery = async () => {
     try {
@@ -18,6 +19,11 @@ export default function Query() {
         body: JSON.stringify({ query }),
       });
 
+      if (res.status !== 200) {
+        const resJson = await res.json();
+        setError(resJson.sqlMessage);
+        return;
+      }
       return await res.json();
     } catch (err) {
       console.log(err);
@@ -63,6 +69,21 @@ export default function Query() {
 
   return (
     <div style={{ margin: 20, padding: 20 }}>
+      {error && (
+        <div
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+        >
+          {error}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            onClick={() => setError("")}
+          ></button>
+        </div>
+      )}
       <div
         style={{
           display: "flex",
@@ -93,6 +114,7 @@ export default function Query() {
           type="submit"
           className="btn btn-primary"
           onClick={() => {
+            setView([]);
             sendQuery().then((data) => {
               showView(data);
             });
