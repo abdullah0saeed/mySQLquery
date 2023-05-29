@@ -98,6 +98,7 @@ export default function Query() {
           style={{ padding: 5, fontSize: 18 }}
           value={query}
           onChange={(e) => {
+            setError("");
             setQuery(e.target.value);
           }}
         />
